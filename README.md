@@ -57,15 +57,22 @@ This will:
 3. Deploy node-exporter to spoke clusters
 4. Deploy Prometheus agents to spoke clusters (configured to remote write to hub)
 
-### Access Prometheus UIs
+### Access Prometheus UI
 
-Once setup is complete, access the Prometheus UIs:
+Once setup is complete, access the hub Prometheus UI:
 
-- **Hub**: http://localhost:9090 (receives metrics from all spokes)
-- **Spoke1**: http://localhost:9091 (agent mode - limited UI)
-- **Spoke2**: http://localhost:9092 (agent mode - limited UI)
+- **Hub**: http://localhost:9090
 
-**Note**: Spoke Prometheus instances run in agent mode, so querying is disabled. All queries should be run on the hub.
+**Note**: This is your main interface for querying all metrics. Spoke Prometheus instances run in agent mode and do not have a functional query UI. They only forward metrics to the hub.
+
+### Verify Node-Exporter is Running
+
+Check that node-exporter is being scraped by the spoke Prometheus agents:
+
+- **Spoke1**: http://localhost:9091/targets (should show node-exporter endpoint as UP)
+- **Spoke2**: http://localhost:9092/targets (should show node-exporter endpoint as UP)
+
+**Note**: The spoke clusters run in agent mode, so only the status pages (like /targets) are available. The query UI is disabled.
 
 ### Verify Remote Write is Working
 

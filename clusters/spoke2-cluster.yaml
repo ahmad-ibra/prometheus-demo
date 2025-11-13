@@ -4,6 +4,6 @@ name: spoke2
 nodes:
   - role: control-plane
     extraPortMappings:
-      - containerPort: 30092
+      - containerPort: 30090
         hostPort: 9092
         protocol: TCP
