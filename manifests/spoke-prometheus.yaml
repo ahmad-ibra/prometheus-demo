@@ -75,12 +75,14 @@ spec:
       serviceAccountName: prometheus
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.48.0
+          image: quay.io/prometheus/prometheus:v3.7.3
           args:
             - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.agent.path=/prometheus'
             - '--web.console.libraries=/usr/share/prometheus/console_libraries'
             - '--web.console.templates=/usr/share/prometheus/consoles'
-            - '--enable-feature=agent'
+            - '--web.enable-lifecycle'
+            - '--agent'
           ports:
             - containerPort: 9090
           volumeMounts:
