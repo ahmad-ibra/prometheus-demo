@@ -1,0 +1,56 @@
+# Minimal Prometheus for hub cluster - receives remote write from spokes
+server:
+  # Enable remote write receiver
+  extraFlags:
+    - web.enable-remote-write-receiver
+
+  # Override default global config to prevent duplication
+  global:
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    evaluation_interval: 15s
+    external_labels:
+      cluster: hub
+
+  # NodePort service to expose Prometheus
+  service:
+    type: NodePort
+    nodePort: 30090
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+# Override the entire prometheus.yml to have minimal config
+serverFiles:
+  prometheus.yml:
+    # Minimal scrape config - just scrape itself
+    # Spokes will push their metrics via remote write
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets:
+            - localhost:9090
+
+  # Empty out default rule files
+  alerting_rules.yml: {}
+  recording_rules.yml: {}
+  alerts: {}
+  rules: {}
+
+# Disable components we don't need on hub
+alertmanager:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+prometheus-pushgateway:
+  enabled: false
+
+kube-state-metrics:
+  enabled: false

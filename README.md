@@ -40,10 +40,13 @@ This repository demonstrates how to configure Prometheus using remote write with
 - [Docker](https://docs.docker.com/get-docker/)
 - [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Helm](https://helm.sh/docs/intro/install/) (optional, for Helm-based setup)
 
 ## Quick Start
 
-### Setup
+You can set up the demo using either **raw Kubernetes manifests** or **Helm charts**.
+
+### Option 1: Setup with Kubernetes Manifests (Simple)
 
 Run the setup script to create all clusters and deploy Prometheus:
 
@@ -56,6 +59,26 @@ This will:
 2. Deploy Prometheus to the hub cluster with remote write receiver enabled
 3. Deploy node-exporter to spoke clusters
 4. Deploy Prometheus agents to spoke clusters (configured to remote write to hub)
+
+### Option 2: Setup with Helm (Production-like)
+
+For a more production-like setup using Helm charts:
+
+```bash
+./setup-helm.sh
+```
+
+This will:
+1. Create 3 Kind clusters (hub, spoke1, spoke2)
+2. Install Prometheus via Helm on hub cluster with remote write receiver
+3. Install Prometheus (agent mode) + node-exporter via Helm on spoke clusters
+4. All components managed as Helm releases for easy upgrades
+
+**Benefits of Helm approach:**
+- Industry-standard installation method
+- Easy upgrades: `helm upgrade prometheus ...`
+- Centralized configuration via values files
+- Better lifecycle management
 
 ### Access Prometheus UI
 
