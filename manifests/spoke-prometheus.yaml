@@ -15,9 +15,8 @@ data:
       external_labels:
         cluster: 'CLUSTER_NAME'
 
-    # Scrape node-exporter for CPU metrics
-    # NOTE: In production, add a second scrape_config for dcgm-exporter to collect GPU metrics
     scrape_configs:
+      # TODO: Add a second scrape_config for dcgm-exporter to collect GPU metrics
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
           - role: endpoints
@@ -26,18 +25,20 @@ data:
           - source_labels: [__meta_kubernetes_service_name]
             action: keep
             regex: node-exporter
-          - source_labels: [__meta_kubernetes_endpoint_port_name]
-            action: keep
-            regex: metrics
           # Add node name as label
           - source_labels: [__meta_kubernetes_pod_node_name]
             target_label: node
 
-        # NOTE: To limit to ONLY CPU metrics, uncomment the following metric_relabel_configs:
-        # metric_relabel_configs:
-        #   - source_labels: [__name__]
-        #     regex: 'node_cpu_seconds_total|node_cpu_guest_seconds_total'
-        #     action: keep
+        # limit to ONLY node_cpu_seconds_total metrics with mode=idle
+        metric_relabel_configs:
+          # Keep only node_cpu_seconds_total metric
+          - source_labels: [__name__]
+            regex: 'node_cpu_seconds_total'
+            action: keep
+          # Keep only idle mode
+          - source_labels: [mode]
+            regex: 'idle'
+            action: keep
 
     # Remote write to hub cluster
     remote_write:
